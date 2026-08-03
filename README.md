@@ -1,97 +1,113 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Nazar — Yapay Zeka Fal Uygulaması
 
-# Getting Started
+Liquid Glass estetiğiyle tasarlanmış, React Native CLI tabanlı fal uygulaması.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Kurulum
 
-## Step 1: Start Metro
+### 1. Bağımlılıkları yükle
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```bash
+npm install
+# veya
+yarn install
 ```
 
-## Step 2: Build and run your app
+### 2. iOS pod'ları kur
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+cd ios && pod install && cd ..
 ```
 
-### iOS
+### 3. Android için (opsiyonel)
+`android/app/build.gradle` dosyasına herhangi bir ek ayar gerekmez.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## Kullanılan Paketler
 
-```sh
-bundle install
+| Paket | Amaç |
+|---|---|
+| `@react-native-community/blur` | Liquid glass / cam efekti |
+| `react-native-linear-gradient` | Gradient arka planlar, butonlar |
+| `react-native-reanimated` | Performanslı animasyonlar |
+| `react-native-safe-area-context` | Notch / island güvenli alan |
+| `react-native-image-picker` | Fal fotoğrafı yükleme |
+
+---
+
+## Özel Fontlar (Opsiyonel)
+
+`Cormorant Garamond` fontunu eklemek için:
+
+1. Font dosyalarını `src/assets/fonts/` klasörüne koy.
+2. `react-native.config.js` dosyası oluştur:
+
+```js
+module.exports = {
+  assets: ['./src/assets/fonts/'],
+};
 ```
 
-Then, and every time you update your native dependencies, run:
+3. Fontları bağla:
 
-```sh
-bundle exec pod install
+```bash
+npx react-native-asset
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+4. `HomeScreen.tsx` ve diğer bileşenlerde `fontFamily: 'Georgia'` yerine
+   `fontFamily: 'CormorantGaramond-Light'` kullan.
 
-```sh
-# Using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
+## Proje Yapısı
+
+```
+NazarApp/
+├── App.tsx                          # Giriş noktası
+├── src/
+│   ├── constants/
+│   │   └── theme.ts                 # Renkler, fal türleri, sabit veriler
+│   ├── components/
+│   │   ├── BackgroundOrbs.tsx       # Hareketli gradient orb'lar
+│   │   ├── StarField.tsx            # Titreşen yıldız arka planı
+│   │   ├── CrystalBall.tsx          # Kristal küre animasyonu
+│   │   ├── FalTypeChip.tsx          # Fal türü seçim chip'i
+│   │   ├── HistoryItem.tsx          # Geçmiş fal kartı
+│   │   ├── CTAButton.tsx            # Ana gradient butonu
+│   │   └── BottomNav.tsx            # Alt navigasyon çubuğu
+│   └── screens/
+│       └── HomeScreen.tsx           # Ana ekran
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## AI Entegrasyonu
 
-## Step 3: Modify your app
+`HomeScreen.tsx` içindeki `handleFalBak` fonksiyonunu Anthropic API ile bağla:
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```ts
+const handleFalBak = async () => {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': 'YOUR_API_KEY',
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: `Sen deneyimli bir ${activeFal} falcısısın. 
+          Soru: ${question}
+          Lütfen detaylı ve mistik bir yorum yap.`,
+        },
+      ],
+    }),
+  });
+  const data = await response.json();
+  // Sonuç ekranına yönlendir
+};
+```
